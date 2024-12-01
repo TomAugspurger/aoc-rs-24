@@ -6,8 +6,12 @@ pub struct Lists {
 }
 
 pub fn parse_input(input: &str) -> Lists {
-    let mut left = collections::BinaryHeap::new();
-    let mut right = collections::BinaryHeap::new();
+    // Seems like just using Vecs and then
+    // sorting is slightly faster on the benchmark?
+    // let mut left = collections::BinaryHeap::new();
+    // let mut right = collections::BinaryHeap::new();
+    let mut left = Vec::new();
+    let mut right = Vec::new();
 
     for line in input.lines() {
         let mut iter = line.split_ascii_whitespace();
@@ -23,7 +27,11 @@ pub fn parse_input(input: &str) -> Lists {
         assert!(iter.next().is_none());
     }
 
-    Lists { left: left.into_sorted_vec(), right: right.into_sorted_vec() }
+    left.sort();
+    right.sort();
+
+    // Lists { left: left.into_sorted_vec(), right: right.into_sorted_vec() }
+    Lists { left, right }
 }
 
 pub fn find_distance(lists: &Lists) -> i64 {
