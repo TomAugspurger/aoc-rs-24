@@ -1,7 +1,5 @@
-pub mod d01;
-
 use std::{fs, path::PathBuf};
-
+use aoc_rs_24::d01;
 use clap::{Parser, Subcommand};
 
 #[derive(Parser)]
