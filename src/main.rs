@@ -1,5 +1,5 @@
 use std::{fs, path::PathBuf};
-use aoc_rs_24::d01;
+use aoc_rs_24::{d01, d02};
 use clap::{Parser, Subcommand};
 
 #[derive(Parser)]
@@ -19,6 +19,12 @@ enum Commands {
         #[arg(short, long, action)]
         as_score: bool,
     },
+
+    D2 {
+        #[arg(short, long)]
+        input: PathBuf,
+    }
+
 }
 
 fn main() {
@@ -35,6 +41,11 @@ fn main() {
                 let result = d01::find_distance(&data);
                 println!("{result}"); // 26674158
             }
+        }
+        Some(Commands::D2 { input }) => {
+            let data = d02::parse_input(&fs::read_to_string(input).expect("Failed to read file."));
+            let result = d02::count_safe(&data);  // 442
+            println!("{result}"); // 26674158
         }
         None => {}
     }
