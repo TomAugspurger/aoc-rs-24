@@ -23,6 +23,9 @@ enum Commands {
     D2 {
         #[arg(short, long)]
         input: PathBuf,
+
+        #[arg(short, long, action)]
+        damped: bool,
     }
 
 }
@@ -42,10 +45,10 @@ fn main() {
                 println!("{result}"); // 26674158
             }
         }
-        Some(Commands::D2 { input }) => {
+        Some(Commands::D2 { input, damped }) => {
             let data = d02::parse_input(&fs::read_to_string(input).expect("Failed to read file."));
-            let result = d02::count_safe(&data);  // 442
-            println!("{result}"); // 26674158
+            let result = d02::count_safe(&data, *damped); 
+            println!("{result}"); // 442, 493
         }
         None => {}
     }

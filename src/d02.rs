@@ -9,89 +9,78 @@ pub fn parse_input(input: &str) -> Vec<Vec<u32>> {
         .collect()
 }
 
-fn is_safe(record: &[u32]) -> bool {
-    let mut gen = record.iter();
-    let mut previous = gen.next().expect("Empty record");
-    let mut is_safe = true;
-    let mut difference: i64 = 0;
+/*
+Damper logic:
 
-    for current in gen {
-        let change = *current as i64 - *previous as i64;
+This is "recoverable" if removing a level results in a safe report. How can we check that?
 
-        if difference != 0 && change.signum() != difference.signum() {
-            is_safe = false
+1. Naive: check all subslices. Nope.
+2. Better: find the location of problems. Remove (around there) and check again.
+3. Best: math?
+
+Naively, you can try all the [n-1] slices. Nope.
+
+You can also check *where* the issues are, remove around there, and try again. Better.
+*/
+
+pub fn is_safe_damped(record: &[u32], damped: bool) -> bool {
+    let mut previous_sign = 0;
+
+    let mut ok = true;
+
+    for (i, window) in record.windows(2).enumerate() {
+        if !(1..4).contains(&window[0].abs_diff(window[1])) {
+            ok = false
+        }
+        let sign = (window[0] as i64 - window[1] as i64).signum();
+
+        if i == 0 {
+            previous_sign = sign
+        } else if sign != previous_sign {
+            ok = false
         }
 
-        if change.abs() < 1 || change.abs() > 3 {
-            is_safe = false
-        }
+        if !ok && !damped {
+            break;
+        } else if !ok {
+            // We can try a few things:
+            // 1. remove the previous
+            // 2. remove the current
+            // 3. remove the next
+            // println!("i={i}. {}", i.min(1));
+            let record2 = &[&record[..i.max(1) - 1], &record[i..]].concat();
+            let mut r = is_safe_damped(record2, false);
 
-        if !is_safe {
-            break
-        }
+            if !r {
+                let record3 = &[&record[..i], &record[i + 1..]].concat();
+                r = is_safe_damped(record3, false);
+                // eprintln!("**Unsafe record @ {i}={record:?} -> {record2:?} -> {record3:?} -> {r2}**");
+            }
 
-        previous = current;
-        difference = change;
+            if !r {
+                let record3 = &[&record[..i + 1], &record[i + 2..]].concat();
+                r = is_safe_damped(record3, false);
+                // eprintln!("**Unsafe record @ {i}={record:?} -> {record2:?} -> {record3:?} -> {r}**");
+            }
+
+            return r;
+        }
     }
 
-    is_safe
-
+    ok
 }
 
-
-fn is_safe_damper(record: &[u32]) -> bool {
-    let mut gen = record.iter();
-    let mut previous = gen.next().expect("Empty record");
-    let mut is_safe = true;
-    let mut difference: i64 = 0;
-    let mut used_damper = false;
-
-    for current in gen {
-        let change = *current as i64 - *previous as i64;
-
-        if difference != 0 && change.signum() != difference.signum() {
-            is_safe = false
-        }
-
-        if change.abs() < 1 || change.abs() > 3 {
-            is_safe = false
-        }
-
-        if !is_safe && used_damper {
-            break
-        }
-        else if !is_safe {
-            // We can ignore either the previous or current value:
-            // Or can you also maybe eliminate the previous?
-            // 1 5 4 3 2 1  -- eliminate the 1
-            // 1 5 2 3 4 5  -- eliminate the 5
-            
-
-
-
-
-            used_damper = true
-        }
-
-        previous = current;
-        difference = change;
-    }
-
-    is_safe
-
+pub fn count_safe(report: &[Vec<u32>], damped: bool) -> usize {
+    report
+        .iter()
+        .map(|x| is_safe_damped(x, damped))
+        .filter(|b| *b)
+        .count()
 }
-
-
-
-
-pub fn count_safe(report: &[Vec<u32>]) -> usize {
-    report.iter().map(|x| is_safe(x)).filter(|b| *b).count()
-} 
 
 #[cfg(test)]
 mod tests {
-    use crate::d02::{is_safe, parse_input};
-
+    use crate::d02::{is_safe_damped, parse_input};
 
     #[test]
     fn test_part_1_example() {
@@ -102,9 +91,55 @@ mod tests {
 8 6 4 4 1
 1 3 6 7 9";
         let records = parse_input(input);
-        let result: Vec<_> = records.iter().map(|line| is_safe(line)).collect();
+        let result: Vec<_> = records
+            .iter()
+            .map(|line| is_safe_damped(line, false))
+            .collect();
         let expected = vec![true, false, false, false, false, true];
-        assert_eq!(result, expected)
+        assert_eq!(result, expected);
+    }
+
+    #[test]
+    fn test_example() {
+        let records = vec![6, 8, 11, 12, 14, 16, 18];
+        let result = is_safe_damped(&records, false);
+        assert!(result);
+    }
+
+    #[test]
+    fn test_problem_edges() {
+        let records = vec![0, 10, 11, 12, 13, 14];
+        let result = is_safe_damped(&records, true);
+        assert!(result);
+
+        let result = is_safe_damped(&records, false);
+        assert!(!result);
+
+        let records = vec![1, 2, 3, 4, 10];
+        let result = is_safe_damped(&records, true);
+        assert!(result);
+
+        let result = is_safe_damped(&records, false);
+        assert!(!result);
+
+        let records = vec![1, 2, 3, 100, 4, 5];
+        let result = is_safe_damped(&records, true);
+        assert!(result);
+
+        let records = vec![1, 2, 3, 1, 4, 5];
+        let result = is_safe_damped(&records, true);
+        assert!(result);
+
+        let records = vec![10, 9, 11, 12, 13, 14];
+        let result = is_safe_damped(&records, true);
+        assert!(result);
+    }
+
+    #[test]
+    fn test_problem_initial() {
+        let records = vec![7, 4, 7, 8, 9, 10];
+        let result = is_safe_damped(&records, true);
+        assert!(result);
     }
 
     #[test]
@@ -116,10 +151,11 @@ mod tests {
 8 6 4 4 1
 1 3 6 7 9";
         let records = parse_input(input);
-        let result: Vec<_> = records.iter().map(|line| is_safe(line)).collect();
-        let expected = vec![true, false, false, false, false, true];
-        assert_eq!(result, expected)
+        let expected = vec![true, false, false, true, true, true];
+        let result: Vec<_> = records
+            .iter()
+            .map(|line| is_safe_damped(line, true))
+            .collect();
+        assert_eq!(result, expected);
     }
-
-
 }
