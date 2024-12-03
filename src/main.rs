@@ -1,5 +1,5 @@
 use std::{fs, path::PathBuf};
-use aoc_rs_24::{d01, d02};
+use aoc_rs_24::{d01, d02, d03};
 use clap::{Parser, Subcommand};
 
 #[derive(Parser)]
@@ -26,6 +26,11 @@ enum Commands {
 
         #[arg(short, long, action)]
         damped: bool,
+    },
+
+    D3 {
+        #[arg(short, long)]
+        input: PathBuf,
     }
 
 }
@@ -49,6 +54,12 @@ fn main() {
             let data = d02::parse_input(&fs::read_to_string(input).expect("Failed to read file."));
             let result = d02::count_safe(&data, *damped); 
             println!("{result}"); // 442, 493
+        }
+        Some(Commands::D3 { input }) => {
+            let input = fs::read_to_string(input).expect("Failed to read file.");
+            let result = d03::evaluate(&input); 
+            println!("{result}"); // 
+ 
         }
         None => {}
     }
