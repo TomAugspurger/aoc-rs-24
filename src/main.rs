@@ -1,4 +1,4 @@
-use aoc_rs_24::{d01, d02, d03};
+use aoc_rs_24::{d01, d02, d03, d04};
 use clap::{Parser, Subcommand};
 use std::{fs, path::PathBuf};
 
@@ -35,6 +35,11 @@ enum Commands {
         #[arg(short, long, action)]
         switches: bool,
     },
+
+    D4 {
+        #[arg(short, long)]
+        input: PathBuf,
+    },
 }
 
 fn main() {
@@ -60,12 +65,16 @@ fn main() {
             let input = fs::read_to_string(input).expect("Failed to read file.");
 
             let result = if *switches {
-                d03::evaluate_switches(&input)  // 84893551 is too high
-            }
-            else {
+                d03::evaluate_switches(&input) // 84893551 is too high
+            } else {
                 d03::evaluate(&input) // 160672468
             };
             println!("{result}"); //
+        }
+        Some(Commands::D4 { input }) => {
+            let input = fs::read_to_string(input).expect("Failed to read file.");
+            let result = d04::count_xmas(&input);
+            println!("{result}");
         }
         None => {}
     }
