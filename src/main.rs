@@ -39,6 +39,10 @@ enum Commands {
     D4 {
         #[arg(short, long)]
         input: PathBuf,
+
+        #[arg(short, long, action)]
+        xs: bool,
+
     },
 }
 
@@ -71,9 +75,10 @@ fn main() {
             };
             println!("{result}"); //
         }
-        Some(Commands::D4 { input }) => {
+        Some(Commands::D4 { input , xs}) => {
             let input = fs::read_to_string(input).expect("Failed to read file.");
-            let result = d04::count_xmas(&input);
+            let result = d04::count_xmas(&input, *xs);
+            // 2454 and 1858
             println!("{result}");
         }
         None => {}
