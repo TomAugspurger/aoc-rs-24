@@ -1,4 +1,4 @@
-use aoc_rs_24::{d01, d02, d03, d04};
+use aoc_rs_24::{d01, d02, d03, d04, d05};
 use clap::{Parser, Subcommand};
 use std::{fs, path::PathBuf};
 
@@ -42,6 +42,14 @@ enum Commands {
 
         #[arg(short, long, action)]
         xs: bool,
+    },
+
+    D5 {
+        #[arg(short, long)]
+        input: PathBuf,
+
+        #[arg(short, long, action)]
+        fix_only: bool,
 
     },
 }
@@ -75,10 +83,15 @@ fn main() {
             };
             println!("{result}"); //
         }
-        Some(Commands::D4 { input , xs}) => {
+        Some(Commands::D4 { input, xs }) => {
             let input = fs::read_to_string(input).expect("Failed to read file.");
             let result = d04::count_xmas(&input, *xs);
             // 2454 and 1858
+            println!("{result}");
+        }
+        Some(Commands::D5 { input, fix_only}) => {
+            let input = fs::read_to_string(input).expect("Failed to read file.");
+            let result = d05::check(&input, fix_only);
             println!("{result}");
         }
         None => {}
