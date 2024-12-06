@@ -69,8 +69,8 @@ pub fn parse_input(input: &str) -> State {
         }
     }
 
-    let visited = vec![vec![false; n]; m + 1];
-
+    let mut visited = vec![vec![false; n]; m + 1];
+    visited[position.0][position.1] = true;
     State {
         visited,
         position: Guard::Position(position.0, position.1),
@@ -82,7 +82,7 @@ pub fn parse_input(input: &str) -> State {
 pub fn count_positions(input: &str) -> u32 {
     let mut state = parse_input(input);
     state.run();
-    eprintln!("{}", String::from_utf8_lossy(&state.format_visited()));
+    // eprintln!("{}", String::from_utf8_lossy(&state.format_visited()));
     state.count_visited()
 }
 
@@ -108,6 +108,7 @@ fn update_position(
                 Guard::Missing
             } else {
                 let p = candidates.iter().max_by(|a, b| a.0.cmp(&b.0)).unwrap();
+                assert!(obstacles.contains(p));
                 Guard::Position(p.0 + 1, p.1)
             }
         }
@@ -123,6 +124,7 @@ fn update_position(
                 Guard::Missing
             } else {
                 let p = candidates.iter().min_by(|a, b| a.0.cmp(&b.0)).unwrap();
+                assert!(obstacles.contains(p));
                 Guard::Position(p.0 - 1, p.1)
             }
         }
@@ -138,6 +140,7 @@ fn update_position(
                 Guard::Missing
             } else {
                 let p = candidates.iter().max_by(|a, b| a.0.cmp(&b.0)).unwrap();
+                assert!(obstacles.contains(p));
                 Guard::Position(p.0, p.1 + 1)
             }
         }
@@ -153,6 +156,7 @@ fn update_position(
                 Guard::Missing
             } else {
                 let p = candidates.iter().min_by(|a, b| a.0.cmp(&b.0)).unwrap();
+                assert!(obstacles.contains(p));
                 Guard::Position(p.0, p.1 - 1)
             }
         }
