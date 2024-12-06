@@ -162,7 +162,7 @@ pub fn check(input: &str, fix_only: &bool) -> u32 {
 mod tests {
     use std::vec;
 
-    use crate::d05::{build_mapping, check, fix_ordering, is_valid, Rule, Rules};
+    use crate::d05::{build_mapping, check, fix_ordering, is_valid, Rules};
 
     use super::{parse_input, sum_valid_middle};
 
