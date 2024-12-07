@@ -12,6 +12,7 @@ pub struct Line {
 pub enum Operator {
     Add,
     Mul,
+    Concat,
 }
 
 pub fn parse_input(input: &str) -> Vec<Line> {
@@ -35,7 +36,7 @@ impl Line {
     pub fn find_solutions(&self) -> bool {
         // let mut result = Vec::new();
         let n_operators = self.operands.len() - 1;
-        let options = [Operator::Add, Operator::Mul];
+        let options = [Operator::Add, Operator::Mul, Operator::Concat];
 
         // [ [Add], [Mul] ]
         // [ [Add, Add], [Add, Mul], [Mul, Add], [Mul, Mul]]
@@ -54,6 +55,10 @@ impl Line {
                 match operator {
                     Operator::Add => acc += operand,
                     Operator::Mul => acc *= operand,
+                    Operator::Concat => {
+                        let new = (acc.to_string() + &operand.to_string()).parse().unwrap();
+                        acc = new;
+                    }
                 }
 
                 if acc > self.result {
@@ -115,6 +120,7 @@ mod tests {
     fn test_example_1() {
         let data = parse_input(INPUT);
         let result = sum_valid_lines(&data);
-        assert_eq!(result, 3749);
+        // assert_eq!(result, 3749);  // part 1
+        assert_eq!(result, 11387);
     }
 }

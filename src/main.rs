@@ -113,6 +113,8 @@ fn main() {
         Some(Commands::D7 { input }) => {
             let input = fs::read_to_string(input).expect("Failed to read file.");
             let result = d07::total_calibration_result(&input);
+            // part 1: 20281182715321 in ~1s
+            // part 2: 159490400628354 (in 22s)
             println!("{result}");
         }
 
