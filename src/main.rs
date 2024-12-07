@@ -1,4 +1,4 @@
-use aoc_rs_24::{d01, d02, d03, d04, d05, d06};
+use aoc_rs_24::{d01, d02, d03, d04, d05, d06, d07};
 use clap::{Parser, Subcommand};
 use std::{fs, path::PathBuf};
 
@@ -56,7 +56,13 @@ enum Commands {
     D6 {
         #[arg(short, long)]
         input: PathBuf,
+    },
+
+    D7 {
+        #[arg(short, long)]
+        input: PathBuf,
     }
+
 }
 
 fn main() {
@@ -102,9 +108,14 @@ fn main() {
         Some(Commands::D6 { input }) => {
             let input = fs::read_to_string(input).expect("Failed to read file.");
             let result = d06::count_positions(&input);
-            // 5211 is too low...
             println!("{result}");
         }
+        Some(Commands::D7 { input }) => {
+            let input = fs::read_to_string(input).expect("Failed to read file.");
+            let result = d07::total_calibration_result(&input);
+            println!("{result}");
+        }
+
         None => {}
     }
 }
