@@ -1,4 +1,4 @@
-use aoc_rs_24::{d01, d02, d03, d04, d05, d06, d07};
+use aoc_rs_24::{d01, d02, d03, d04, d05, d06, d07, d08};
 use clap::{Parser, Subcommand};
 use std::{fs, path::PathBuf};
 
@@ -50,7 +50,6 @@ enum Commands {
 
         #[arg(short, long, action)]
         fix_only: bool,
-
     },
 
     D6 {
@@ -61,8 +60,12 @@ enum Commands {
     D7 {
         #[arg(short, long)]
         input: PathBuf,
-    }
+    },
 
+    D8 {
+        #[arg(short, long)]
+        input: PathBuf,
+    },
 }
 
 fn main() {
@@ -100,7 +103,7 @@ fn main() {
             // 2454 and 1858
             println!("{result}");
         }
-        Some(Commands::D5 { input, fix_only}) => {
+        Some(Commands::D5 { input, fix_only }) => {
             let input = fs::read_to_string(input).expect("Failed to read file.");
             let result = d05::check(&input, fix_only);
             println!("{result}");
@@ -115,6 +118,13 @@ fn main() {
             let result = d07::total_calibration_result(&input);
             // part 1: 20281182715321 in ~1s
             // part 2: 159490400628354 (in 22s)
+            println!("{result}");
+        }
+
+        Some(Commands::D8 { input }) => {
+            let input = fs::read_to_string(input).expect("Failed to read file.");
+            let result = d08::count_antinodes(&input);
+            // 394 is too high.
             println!("{result}");
         }
 
