@@ -1,4 +1,4 @@
-use aoc_rs_24::{d01, d02, d03, d04, d05, d06, d07, d08};
+use aoc_rs_24::{d01, d02, d03, d04, d05, d06, d07, d08, d09};
 use clap::{Parser, Subcommand};
 use std::{fs, path::PathBuf};
 
@@ -66,6 +66,11 @@ enum Commands {
         #[arg(short, long)]
         input: PathBuf,
     },
+
+    D9 {
+        #[arg(short, long)]
+        input: PathBuf,
+    },
 }
 
 fn main() {
@@ -124,7 +129,13 @@ fn main() {
         Some(Commands::D8 { input }) => {
             let input = fs::read_to_string(input).expect("Failed to read file.");
             let result = d08::count_antinodes(&input);
-            // 394 is too high.
+            println!("{result}");
+        }
+
+        Some(Commands::D9 { input }) => {
+            let input = fs::read_to_string(input).expect("Failed to read file.");
+            let result = d09::run(&input);
+            // 6448989155953
             println!("{result}");
         }
 
