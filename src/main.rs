@@ -1,4 +1,4 @@
-use aoc_rs_24::{d01, d02, d03, d04, d05, d06, d07, d08, d09};
+use aoc_rs_24::{d01, d02, d03, d04, d05, d06, d07, d08, d09, d10};
 use clap::{Parser, Subcommand};
 use std::{fs, path::PathBuf};
 
@@ -71,6 +71,11 @@ enum Commands {
         #[arg(short, long)]
         input: PathBuf,
     },
+    D10 {
+        #[arg(short, long)]
+        input: PathBuf,
+    },
+
 }
 
 fn main() {
@@ -138,6 +143,15 @@ fn main() {
             // 6448989155953
             println!("{result}");
         }
+
+        Some(Commands::D10 { input }) => {
+            let input = fs::read_to_string(input).expect("Failed to read file.");
+            let result = d10::main(&input);
+            // 531
+            println!("{result}");
+        }
+
+
 
         None => {}
     }
