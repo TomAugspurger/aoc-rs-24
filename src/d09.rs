@@ -114,70 +114,70 @@ pub fn defragment(fs: &mut VecDeque<Block>) -> Vec<Block> {
     fs2
 }
 
-pub fn defragment2(input: &str) -> Vec<File> {
-    let mut fs: Vec<File> = Vec::with_capacity(input.len());
-    let mut cursor = 0;
-    for (i, char) in input.chars().enumerate() {
-        let (id, is_file) = (i / 2, i % 2 == 0);
-        let size = char.to_digit(10).unwrap() as u8;
-        cursor += size as usize;
-        fs.push(File {
-            id,
-            size,
-            is_file,
-            start: cursor,
-        });
-    }
+// pub fn defragment2(input: &str) -> Vec<File> {
+//     let mut fs: Vec<File> = Vec::with_capacity(input.len());
+//     let mut cursor = 0;
+//     for (i, char) in input.chars().enumerate() {
+//         let (id, is_file) = (i / 2, i % 2 == 0);
+//         let size = char.to_digit(10).unwrap() as u8;
+//         cursor += size as usize;
+//         fs.push(File {
+//             id,
+//             size,
+//             is_file,
+//             start: cursor,
+//         });
+//     }
 
-    let mut target_cursor = 0;
-    let mut move_cursor = fs.len() - 1;
-    let mut fs2: Vec<File> = fs.clone();
+//     let mut target_cursor = 0;
+//     let mut move_cursor = fs.len() - 1;
+//     let mut fs2: Vec<File> = fs.clone();
 
-    // for a in fs.iter() {
-    //     if a.is_file {
-    //         fs2.push(a.clone());
-    //         break
-    //     }
+//     // for a in fs.iter() {
+//     //     if a.is_file {
+//     //         fs2.push(a.clone());
+//     //         break
+//     //     }
 
-    //     for b in fs.iter().rev() {
-    //         if a.id == b.id {
-    //             break
-    //         }
-    //     }
-    // }
+//     //     for b in fs.iter().rev() {
+//     //         if a.id == b.id {
+//     //             break
+//     //         }
+//     //     }
+//     // }
 
-    // while target_cursor < move_cursor {
-    //     let to_move = &fs[move_cursor];
-    //     if !to_move.is_file {
-    //         move_cursor -= 1;
-    //         continue;
-    //     }
+//     // while target_cursor < move_cursor {
+//     //     let to_move = &fs[move_cursor];
+//     //     if !to_move.is_file {
+//     //         move_cursor -= 1;
+//     //         continue;
+//     //     }
 
-    //     // Now we should have a file try to insert it.
-    //     for (i, file) in fs.iter().enumerate() {
-    //         if !file.is_file && file.size > to_move.size {
-    //             // fs.swap(target_cursor + i, move_cursor);
-    //             target_cursor = target_cursor + i
-    //         }
-    //     }
-    // }
+//     //     // Now we should have a file try to insert it.
+//     //     for (i, file) in fs.iter().enumerate() {
+//     //         if !file.is_file && file.size > to_move.size {
+//     //             // fs.swap(target_cursor + i, move_cursor);
+//     //             target_cursor = target_cursor + i
+//     //         }
+//     //     }
+//     // }
 
-    fs2
+//     fs2
 
-    // let mut fs2: Vec<File> = Vec::with_capacity(fs.len());
-    // Will the output have the same number of "files" as the input?
+//     // let mut fs2: Vec<File> = Vec::with_capacity(fs.len());
+//     // Will the output have the same number of "files" as the input?
 
-    // F E F F E F
-    // F F F F E E
+//     // F E F F E F
+//     // F F F F E E
 
-    // cursor = 0;
+//     // cursor = 0;
 
-    // let mut gen = fs.iter();
+//     // let mut gen = fs.iter();
 
-    // gen.next_back();
+//     // gen.next_back();
 
-    // fs2
-}
+//     // fs2
+// }
 
 pub fn run(input: &str) -> u64 {
     let mut fs: VecDeque<Block> = VecDeque::with_capacity(input.len());
