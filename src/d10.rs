@@ -99,7 +99,35 @@ pub fn find_trails(grid: &Grid, row: &usize, col: &usize, value: &u8) -> Vec<(us
         neighbors
             .iter()
             .filter(|(r, c)| grid.iloc(*r, *c).unwrap() == &(value + 1))
-            .flat_map(|(r, c)| find_trails(grid, r, c, &(value + 1))).unique().collect()
+            .flat_map(|(r, c)| find_trails(grid, r, c, &(value + 1)))
+            .unique()
+            .collect()
+    }
+}
+
+pub fn find_trails2(
+    grid: &Grid,
+    row: &usize,
+    col: &usize,
+    value: &u8,
+    history: &[(usize, usize)],
+) -> Vec<(usize, usize)> {
+    let new_history = [history, &[(*row, *col)]].concat();
+    if *value == 9 {
+        new_history
+    } else {
+        let neighbors = grid.neighbors(*row, *col);
+        eprintln!("row={row} col={col} value={value} neighbors={neighbors:?} new_history=:{new_history:?}");
+        neighbors
+            .iter()
+            .filter(|(r, c)| grid.iloc(*r, *c).unwrap() == &(value + 1))
+            .flat_map(|(r, c)| find_trails2(grid, r, c, &(value + 1), &new_history))
+            .sorted()
+            .inspect(|&x| {
+                eprintln!("{x:?} {:?}", grid.iloc(x.0, x.1));
+            })
+            .unique()
+            .collect()
     }
 }
 
@@ -120,20 +148,28 @@ pub fn find_trails(grid: &Grid, row: &usize, col: &usize, value: &u8) -> Vec<(us
 //     todo!()
 // }
 
-pub fn sum_trailhead_scores(grid: &Grid) -> u64 {
+pub fn sum_trailhead_scores(grid: &Grid, as_ratings: bool) -> u64 {
     let trailheads = find_trailheads_candidates(grid);
     // let score = trailheads.iter().map(|(r, c)| count_trails(grid, r, c, &0)).sum();
     // eprintln!("Starts: {:?}", trailheads);
-    let x: usize = trailheads
-        .iter()
-        .map(|(r, c)| find_trails(grid, r, c, &0).len()).sum();
-    x as u64
+    let x = if as_ratings {
+        trailheads
+            .iter()
+            .map(|(r, c)| find_trails2(grid, r, c, &0, &[(*r, *c)]).len())
+            .sum::<usize>()
+    } else {
+        trailheads
+            .iter()
+            .map(|(r, c)| find_trails(grid, r, c, &0).len())
+            .sum()
+    } as u64;
 
+    x
 }
 
-pub fn main(input: &str) -> u64 {
+pub fn main(input: &str, as_ratings: bool) -> u64 {
     let grid = parse_input(input);
-    sum_trailhead_scores(&grid)
+    sum_trailhead_scores(&grid, as_ratings)
 }
 
 #[cfg(test)]
@@ -158,15 +194,19 @@ mod tests {
 
     #[test]
     fn test_example_1() {
-        let result = main(INPUT_1);
+        let result = main(INPUT_1, false);
         assert_eq!(result, 1);
     }
 
-
     #[test]
     fn test_example_2() {
-        let result = main(INPUT_2);
+        let result = main(INPUT_2, false);
         assert_eq!(result, 36);
     }
 
+    // #[test]
+    // fn test_example_2_part_2() {
+    //     let result = main(INPUT_2, true);
+    //     assert_eq!(result, 81);
+    // }
 }

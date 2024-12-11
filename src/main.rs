@@ -74,6 +74,10 @@ enum Commands {
     D10 {
         #[arg(short, long)]
         input: PathBuf,
+
+        #[arg(short, long, action)]
+        as_rating: bool,
+
     },
 
 }
@@ -144,9 +148,9 @@ fn main() {
             println!("{result}");
         }
 
-        Some(Commands::D10 { input }) => {
+        Some(Commands::D10 { input, as_rating}) => {
             let input = fs::read_to_string(input).expect("Failed to read file.");
-            let result = d10::main(&input);
+            let result = d10::main(&input, *as_rating);
             // 531
             println!("{result}");
         }
