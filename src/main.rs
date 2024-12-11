@@ -77,16 +77,15 @@ enum Commands {
 
         #[arg(short, long, action)]
         as_rating: bool,
-
     },
 
     D11 {
         #[arg(short, long)]
         input: PathBuf,
+
+        #[arg(short, long, default_value_t=25)]
+        n_blinks: u64,
     },
-
-
-
 }
 
 fn main() {
@@ -155,21 +154,18 @@ fn main() {
             println!("{result}");
         }
 
-        Some(Commands::D10 { input, as_rating}) => {
+        Some(Commands::D10 { input, as_rating }) => {
             let input = fs::read_to_string(input).expect("Failed to read file.");
             let result = d10::main(&input, *as_rating);
             // 531
             println!("{result}");
         }
-        Some(Commands::D11 { input}) => {
+        Some(Commands::D11 { input , n_blinks}) => {
             let input = fs::read_to_string(input).expect("Failed to read file.");
-            let result = d11::main(&input);
+            let result = d11::main(&input, *n_blinks);
             // 531
             println!("{result}");
         }
-
-
-
 
         None => {}
     }
