@@ -88,7 +88,8 @@ impl Game {
 }
 
 
-pub fn main(input: &str) -> u64 {
+pub fn main(input: &str, offset: u64) -> u64 {
+    let _ = offset;
     let games = parse_input(input);
     games.iter().filter_map(|g| g.solve()).sum()
 }
@@ -116,6 +117,6 @@ Prize: X=18641, Y=10279";
 
     #[test]
     fn test_example_1() {
-        assert_eq!(main(INPUT), 480);
+        assert_eq!(main(INPUT, 0), 480);
     }
 }
