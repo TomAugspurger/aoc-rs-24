@@ -27,41 +27,18 @@ pub fn parse_input(input: &str) -> State {
     result
 }
 
-pub fn shift(p: &(usize, usize), v: &(i32, i32), width: usize, height: usize) -> (usize, usize) {
-    let mut new_x = p.0 as i32 + v.0;
-    let mut new_y = p.1 as i32 + v.1;
-    let w = width as i32;
-    let h = height as i32;
-
-    // If we have a width of 11, the possible values are [0, 1, ..., 10].
-    // We shouldn't ever end up with a width=11 either by addition or subtraction.
-    // A width of 11 is actually 0.
-
-    if new_x < 0 {
-        new_x += w
-    }
-
-    if new_x >= w {
-        new_x -= w
-    }
-
-    if new_y < 0 {
-        new_y += h
-    }
-
-    if new_y >= h {
-        new_y -= h
-    }
-
-    (new_x as usize, new_y as usize)
+pub fn shift_n(p: &(usize, usize), v: &(i32, i32), width: usize, height: usize, n: i32) -> (usize, usize) {
+    let x = ((p.0 as i32) + (n * v.0)).rem_euclid(width as i32) as usize;
+    let y = ((p.1 as i32) + (n * v.1)).rem_euclid(height as i32) as usize;
+    (x, y)
 }
 
-pub fn step(state: &State, width: usize, height: usize) -> State {
+pub fn step_n(state: &State, width: usize, height: usize, n: i32) -> State {
     let mut next = Vec::with_capacity(state.len());
 
     for (position, velocity) in state.iter() {
         // special kind of wrapping addition
-        let new_p = shift(position, velocity, width, height);
+        let new_p = shift_n(position, velocity, width, height, n);
         next.push((new_p, *velocity));
     }
 
@@ -92,10 +69,11 @@ pub fn format_grid(state: &State, width: usize, height: usize) {
 
 pub fn main(input: &str, n_iter: usize, width: usize, height: usize) -> u64 {
     let mut state = parse_input(input);
-    for _i in 0..n_iter {
-        state = step(&state, width, height);
-        // format_grid(&state, width, height);
-    }
+    state = step_n(&state, width, height, n_iter as i32);
+    // for _i in 0..n_iter {
+    //     state = step(&state, width, height);
+    //     // format_grid(&state, width, height);
+    // }
 
     let mut quadrants = [0; 4];
     let w2 = width / 2;
@@ -127,7 +105,7 @@ pub fn main(input: &str, n_iter: usize, width: usize, height: usize) -> u64 {
 mod tests {
     use crate::d14::parse_input;
 
-    use super::{main, step};
+    use super::{main, step_n};
 
     const INPUT: &str = "\
 p=0,4 v=3,-3
@@ -154,15 +132,10 @@ p=9,5 v=-3,-3";
         let state = parse_input(INPUT);
         let width = 11;
         let height = 7;
-        let s1 = step(&state, width, height);
-        assert_eq!(s1[10].0, (4, 1));
-        let s2 = step(&s1, width, height);
-        assert_eq!(s2[10].0, (6, 5));
-        let s3 = step(&s2, width, height);
-        assert_eq!(s3[10].0, (8, 2));
-        let s4 = step(&s3, width, height);
-        assert_eq!(s4[10].0, (10, 6));
-        let s5 = step(&s4, width, height);
-        assert_eq!(s5[10].0, (1, 3));
+        assert_eq!(step_n(&state, width, height, 1)[10].0, (4, 1));
+        assert_eq!(step_n(&state, width, height, 2)[10].0, (6, 5));
+        assert_eq!(step_n(&state, width, height, 3)[10].0, (8, 2));
+        assert_eq!(step_n(&state, width, height, 4)[10].0, (10, 6));
+        assert_eq!(step_n(&state, width, height, 5)[10].0, (1, 3));
     }
 }
