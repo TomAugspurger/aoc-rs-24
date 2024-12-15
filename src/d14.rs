@@ -1,4 +1,4 @@
-use std::collections;
+use std::{collections};
 
 type State = Vec<((usize, usize), (i32, i32))>;
 
@@ -99,6 +99,47 @@ pub fn main(input: &str, n_iter: usize, width: usize, height: usize) -> u64 {
     // format_grid(&state, width, height);
 
     quadrants.iter().product()
+}
+
+fn var(x: &[f64]) -> f64 {
+    let n = x.len() as f64;
+    let mu: f64 = x.iter().sum::<f64>() / n;
+    let d2: Vec<_> = x.iter().map(|v| (v - mu).powf(2.0)).collect();
+    d2.iter().sum::<f64>() / n
+}
+
+
+pub fn find_tree(input: &str, width: usize, height: usize) -> u64 {
+    /*
+    wow: https://www.reddit.com/r/adventofcode/comments/1he0asr/comment/m1zzfsh/ 
+
+    Basic idea is to find the t that minimizes the variance of the x's and y's.
+
+    The x and y movements are independent of each other, so optimize each separately.
+    Then find the cycle where those two line up.
+
+    */
+    
+    let n_max = width.max(height);
+    let state = parse_input(input);
+    let mut xs: Vec<f64> = Vec::with_capacity(n_max);
+    let mut ys: Vec<_> = Vec::with_capacity(n_max);
+
+    for n in 0..=n_max {
+        let staten = step_n(&state, width, height, n as i32);
+        let x: Vec<_> = staten.iter().map(|x| x.0.0 as f64).collect();
+        xs.push(var(&x));
+
+        let y: Vec<_> = staten.iter().map(|x| x.0.1 as f64).collect();
+        ys.push(var(&y));
+
+    }
+
+    // ys.iter().arg
+
+    todo!()
+
+
 }
 
 #[cfg(test)]
