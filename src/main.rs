@@ -1,4 +1,6 @@
-use aoc_rs_24::{d01, d02, d03, d04, d05, d06, d07, d08, d09, d10, d11, d13, d14, d15, d16, d17, d18};
+use aoc_rs_24::{
+    d01, d02, d03, d04, d05, d06, d07, d08, d09, d10, d11, d13, d14, d15, d16, d17, d18, d19,
+};
 use clap::{Parser, Subcommand};
 use std::{fs, path::PathBuf};
 
@@ -93,7 +95,6 @@ enum Commands {
 
         #[arg(short, long, default_value_t = 0)]
         offset: u64,
-
     },
     D14 {
         #[arg(short, long)]
@@ -137,6 +138,10 @@ enum Commands {
         n_steps: usize,
     },
 
+    D19 {
+        #[arg(short, long)]
+        input: PathBuf,
+    },
 }
 
 fn main() {
@@ -225,7 +230,12 @@ fn main() {
             println!("{result}");
         }
 
-        Some(Commands::D14 { input, n_iter, width, height }) => {
+        Some(Commands::D14 {
+            input,
+            n_iter,
+            width,
+            height,
+        }) => {
             let input = fs::read_to_string(input).expect("Failed to read file.");
             let result = d14::main(&input, *n_iter, *width, *height);
             // 531
@@ -238,7 +248,6 @@ fn main() {
             println!("{result}");
         }
 
-
         Some(Commands::D16 { input }) => {
             let input = fs::read_to_string(input).expect("Failed to read file.");
             let result = d16::main(&input);
@@ -250,9 +259,21 @@ fn main() {
             println!("{result}");
         }
 
-        Some(Commands::D18 { input , n_rows, n_cols, n_steps}) => {
+        Some(Commands::D18 {
+            input,
+            n_rows,
+            n_cols,
+            n_steps,
+        }) => {
             let input = fs::read_to_string(input).expect("Failed to read file.");
             let result = d18::main(&input, *n_rows, *n_cols, *n_steps);
+            println!("{result}");
+        }
+
+        Some(Commands::D19 { input }) => {
+            let input = fs::read_to_string(input).expect("Failed to read file.");
+            // 154 is too low; presumably from failing to backtrack?
+            let result = d19::main(&input);
             println!("{result}");
         }
 

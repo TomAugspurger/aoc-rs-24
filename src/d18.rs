@@ -113,8 +113,6 @@ pub fn main(input: &str, n_rows: usize, n_cols: usize, n_steps: usize) -> usize 
 
 #[cfg(test)]
 mod tests {
-    use std::vec;
-
     use super::parse_input;
 
     const INPUT: &str = "\
