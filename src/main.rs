@@ -1,5 +1,5 @@
 use aoc_rs_24::{
-    d01, d02, d03, d04, d05, d06, d07, d08, d09, d10, d11, d13, d14, d15, d16, d17, d18, d19,
+    d01, d02, d03, d04, d05, d06, d07, d08, d09, d10, d11, d13, d14, d15, d16, d17, d18, d19, d20,
 };
 use clap::{Parser, Subcommand};
 use std::{fs, path::PathBuf};
@@ -142,6 +142,10 @@ enum Commands {
         #[arg(short, long)]
         input: PathBuf,
     },
+    D20 {
+        #[arg(short, long)]
+        input: PathBuf,
+    },
 }
 
 fn main() {
@@ -272,8 +276,14 @@ fn main() {
 
         Some(Commands::D19 { input }) => {
             let input = fs::read_to_string(input).expect("Failed to read file.");
-            // 154 is too low; presumably from failing to backtrack?
             let result = d19::main(&input);
+            println!("{result}");
+        }
+
+        Some(Commands::D20 { input }) => {
+            let input = fs::read_to_string(input).expect("Failed to read file.");
+            // 1380 is too low
+            let result = d20::main(&input);
             println!("{result}");
         }
 
