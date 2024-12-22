@@ -7,8 +7,7 @@ pub fn evaluate(input: &str) -> i32 {
         .map(|caps| {
             let left: &i32 = &caps[1].parse().unwrap();
             let right: &i32 = &caps[2].parse().unwrap();
-            let result = left * right;
-            result
+            left * right
         })
         .sum()
 }

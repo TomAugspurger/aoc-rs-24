@@ -9,7 +9,6 @@ is worth it?
 use std::{
     cmp::Reverse,
     collections::{BinaryHeap, HashMap},
-    u64,
 };
 
 pub struct Map {
@@ -149,7 +148,7 @@ pub fn search(
     (best_score, paths[paths.len() - 1].clone())
 }
 
-pub fn neighbors_of(valid: &Vec<(usize, usize)>, current: (usize, usize)) -> Vec<&(usize, usize)> {
+pub fn neighbors_of(valid: &[(usize, usize)], current: (usize, usize)) -> Vec<&(usize, usize)> {
     // might want to sort this, by the minimum number of turns?
     // then we'll need to pass around a direction we're coming from.
     valid

@@ -102,7 +102,7 @@ impl Program {
 
             match op {
                 Op::adv => {
-                    self.a = self.a / 2_u64.pow(self.combo(operand.into()) as u32);
+                    self.a /= 2_u64.pow(self.combo(operand.into()) as u32);
                 }
                 Op::bxl => {
                     self.b ^= operand as u64;

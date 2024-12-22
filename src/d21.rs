@@ -49,8 +49,9 @@ v<<A>>^A                     |<A>AvA<^AA>A<vAAA>^A
 */
 
 impl NumPad {
-    pub fn move_(&self, to: &NumPad) -> Vec<DPad> {
-        let mut result = Vec::new();
+    pub fn move_(&self, _to: &NumPad) -> Vec<DPad> {
+        todo!();
+        // let mut result = Vec::new();
 
         // // Danger zones:
         // // - "0" can't move left
@@ -140,7 +141,7 @@ impl NumPad {
         //     }
         // }
 
-        result
+        // result
     }
 
     pub fn press(&self, to: &NumPad) -> Vec<DPad> {
@@ -150,7 +151,7 @@ impl NumPad {
     }
 }
 
-pub fn solve(code: &str) -> Vec<DPad> {
+pub fn solve(_code: &str) -> Vec<DPad> {
     // What state do we need to keep track of? Each robot
     // has a current position.
     // We have 3 robots:
@@ -160,21 +161,21 @@ pub fn solve(code: &str) -> Vec<DPad> {
 
     // We only really care about *our* number of presses.
 
-    let mut p1 = NumPad::A;
-    let mut p2 = DPad::A;
-    let mut p3 = DPad::A;
-    let mut reuslt: Vec<DPad> = Vec::new();
-    let mut pressed = String::new();
+    // let mut p1 = NumPad::A;
+    // let mut p2 = DPad::A;
+    // let mut p3 = DPad::A;
+    // let mut reuslt: Vec<DPad> = Vec::new();
+    // let mut pressed = String::new();
 
-    for c in code.chars() {
-        // What
-        // r1
-    }
+    // for c in code.chars() {
+    //     // What
+    //     // r1
+    // }
 
     todo!()
 }
 
-pub fn main(input: &str) -> u64 {
+pub fn main(_input: &str) -> u64 {
     todo!()
 }
 
