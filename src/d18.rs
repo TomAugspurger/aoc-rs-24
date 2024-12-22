@@ -63,16 +63,14 @@ impl Grid {
             for neighbor in neighbors.iter() {
                 if *neighbor == target {
                     visited.insert(*neighbor, (row, col));
-                    break
+                    break;
                 }
 
                 if !visited.contains_key(neighbor) {
                     visited.insert(*neighbor, (row, col));
                     queue.push_back(*neighbor);
                 }
-
             }
-
         }
 
         // now go back from the target to the start.
@@ -85,7 +83,6 @@ impl Grid {
 
         path.reverse();
         path
-
     }
 }
 

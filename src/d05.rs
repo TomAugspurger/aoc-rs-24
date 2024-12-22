@@ -97,7 +97,13 @@ impl PartialOrd for Rules<'_> {
 
 pub fn fix_ordering(constraints: &[Rule], ordering: &[u32]) -> Vec<u32> {
     let rules = build_mapping(constraints);
-    let x : Vec<_> = ordering.iter().map(|v| { Rules { value: *v, rules: &rules}}).collect();
+    let x: Vec<_> = ordering
+        .iter()
+        .map(|v| Rules {
+            value: *v,
+            rules: &rules,
+        })
+        .collect();
     let heap = std::collections::BinaryHeap::from(x);
     let result: Vec<u32> = heap.into_sorted_vec().iter().map(|x| x.value).collect();
     result
@@ -201,9 +207,35 @@ mod tests {
 
         let rules = build_mapping(&constraints);
 
-        assert!(Rules { value: 47, rules: &rules} < Rules { value: 53, rules: &rules });
-        assert!(Rules { value: 53, rules: &rules} > Rules { value: 47, rules: &rules });
-        assert_eq!(Rules { value: 0, rules: &rules}.cmp(&Rules { value: 1, rules: &rules }), std::cmp::Ordering::Equal);
+        assert!(
+            Rules {
+                value: 47,
+                rules: &rules
+            } < Rules {
+                value: 53,
+                rules: &rules
+            }
+        );
+        assert!(
+            Rules {
+                value: 53,
+                rules: &rules
+            } > Rules {
+                value: 47,
+                rules: &rules
+            }
+        );
+        assert_eq!(
+            Rules {
+                value: 0,
+                rules: &rules
+            }
+            .cmp(&Rules {
+                value: 1,
+                rules: &rules
+            }),
+            std::cmp::Ordering::Equal
+        );
 
         assert!(is_valid(&constraints, &orderings[0]));
         assert!(!is_valid(&constraints, &orderings[3]));

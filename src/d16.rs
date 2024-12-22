@@ -6,7 +6,11 @@ Are there pathological cases where an "extra" turn
 is worth it?
 
 */
-use std::{cmp::Reverse, collections::{BinaryHeap, HashMap}, u64};
+use std::{
+    cmp::Reverse,
+    collections::{BinaryHeap, HashMap},
+    u64,
+};
 
 pub struct Map {
     pub valid: Vec<(usize, usize)>,
@@ -46,7 +50,11 @@ pub enum Direction {
     W,
 }
 
-pub fn search(start: (usize, usize), end: (usize, usize), valid: Vec<(usize, usize)>)  -> (u64, Vec<Direction>) {
+pub fn search(
+    start: (usize, usize),
+    end: (usize, usize),
+    valid: Vec<(usize, usize)>,
+) -> (u64, Vec<Direction>) {
     // Rust uses a max heap, i.e. pop will return the highest value.
     // We want to minimize our score / cost here, we we generally want to pop the lowest value.
     // So all push operations to the queue should wrap the score in a Reverse.
@@ -71,23 +79,22 @@ pub fn search(start: (usize, usize), end: (usize, usize), valid: Vec<(usize, usi
 
         i += 1;
         if i > 10000000 {
-            break
+            break;
         }
 
         if score.0 > best_score {
             // we can't beat our best score from here, so give up.
-            break
+            break;
         }
 
         visited.entry((position, direction)).or_insert(score.0);
         if visited.get(&(position, direction)).unwrap() < &score.0 {
             // We've already visited here facing this direction, but with a lower cost. Give up.
-            continue
+            continue;
         }
 
         // eprintln!("i={i} score={score:?} position={position:?} direction={direction:?}");
         // We get to (13, 13), but only (try to) head E from there.
-
 
         if position == end {
             // eprintln!("{path:?}");
@@ -117,17 +124,29 @@ pub fn search(start: (usize, usize), end: (usize, usize), valid: Vec<(usize, usi
             Direction::E => (position.0, position.1 + 1),
             Direction::W => (position.0, position.1 - 1),
         };
-     
-        if valid.contains(&forward_position) { 
-            q.push((Reverse(score.0 + 1), forward_position, direction, [path.clone(), vec![direction]].concat()));
+
+        if valid.contains(&forward_position) {
+            q.push((
+                Reverse(score.0 + 1),
+                forward_position,
+                direction,
+                [path.clone(), vec![direction]].concat(),
+            ));
         }
-        q.push((Reverse(score.0 + 1000), position, left, [path.clone(), vec![left]].concat()));
-        q.push((Reverse(score.0 + 1000), position, right, [path.clone(), vec![right]].concat()));
-
-
+        q.push((
+            Reverse(score.0 + 1000),
+            position,
+            left,
+            [path.clone(), vec![left]].concat(),
+        ));
+        q.push((
+            Reverse(score.0 + 1000),
+            position,
+            right,
+            [path.clone(), vec![right]].concat(),
+        ));
     }
     (best_score, paths[paths.len() - 1].clone())
-
 }
 
 pub fn neighbors_of(valid: &Vec<(usize, usize)>, current: (usize, usize)) -> Vec<&(usize, usize)> {

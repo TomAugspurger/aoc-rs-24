@@ -1,4 +1,4 @@
-use std::{collections};
+use std::collections;
 
 type State = Vec<((usize, usize), (i32, i32))>;
 
@@ -27,7 +27,13 @@ pub fn parse_input(input: &str) -> State {
     result
 }
 
-pub fn shift_n(p: &(usize, usize), v: &(i32, i32), width: usize, height: usize, n: i32) -> (usize, usize) {
+pub fn shift_n(
+    p: &(usize, usize),
+    v: &(i32, i32),
+    width: usize,
+    height: usize,
+    n: i32,
+) -> (usize, usize) {
     let x = ((p.0 as i32) + (n * v.0)).rem_euclid(width as i32) as usize;
     let y = ((p.1 as i32) + (n * v.1)).rem_euclid(height as i32) as usize;
     (x, y)
@@ -80,7 +86,6 @@ pub fn main(input: &str, n_iter: usize, width: usize, height: usize) -> u64 {
     let h2 = height / 2;
 
     for (p, _) in state.iter() {
-
         if p.0 < w2 && p.1 < h2 {
             // top-left
             quadrants[0] += 1;
@@ -108,10 +113,9 @@ fn var(x: &[f64]) -> f64 {
     d2.iter().sum::<f64>() / n
 }
 
-
 pub fn find_tree(input: &str, width: usize, height: usize) -> u64 {
     /*
-    wow: https://www.reddit.com/r/adventofcode/comments/1he0asr/comment/m1zzfsh/ 
+    wow: https://www.reddit.com/r/adventofcode/comments/1he0asr/comment/m1zzfsh/
 
     Basic idea is to find the t that minimizes the variance of the x's and y's.
 
@@ -119,7 +123,7 @@ pub fn find_tree(input: &str, width: usize, height: usize) -> u64 {
     Then find the cycle where those two line up.
 
     */
-    
+
     let n_max = width.max(height);
     let state = parse_input(input);
     let mut xs: Vec<f64> = Vec::with_capacity(n_max);
@@ -127,19 +131,16 @@ pub fn find_tree(input: &str, width: usize, height: usize) -> u64 {
 
     for n in 0..=n_max {
         let staten = step_n(&state, width, height, n as i32);
-        let x: Vec<_> = staten.iter().map(|x| x.0.0 as f64).collect();
+        let x: Vec<_> = staten.iter().map(|x| x.0 .0 as f64).collect();
         xs.push(var(&x));
 
-        let y: Vec<_> = staten.iter().map(|x| x.0.1 as f64).collect();
+        let y: Vec<_> = staten.iter().map(|x| x.0 .1 as f64).collect();
         ys.push(var(&y));
-
     }
 
     // ys.iter().arg
 
     todo!()
-
-
 }
 
 #[cfg(test)]

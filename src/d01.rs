@@ -60,9 +60,8 @@ pub fn similarity_score(lists: &Lists) -> i64 {
 
     for x in lists.left.iter() {
         score += (counts.get(x).unwrap_or(&0) * x) as i64;
-    };
+    }
     score
-
 }
 
 #[cfg(test)]
@@ -83,7 +82,5 @@ mod tests {
 
         let result2 = similarity_score(&data);
         assert_eq!(result2, 31);
-
     }
-
 }

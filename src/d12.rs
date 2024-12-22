@@ -103,7 +103,10 @@ pub fn add_plot(
     visited: &mut HashSet<(usize, usize)>,
 ) {
     if regions.is_empty() {
-        eprintln!("First entry for {} @ ({}, {})", plot.label, plot.row, plot.col);
+        eprintln!(
+            "First entry for {} @ ({}, {})",
+            plot.label, plot.row, plot.col
+        );
         let mut new = HashSet::new();
         new.insert((plot.row, plot.col));
         regions.push(new);
@@ -141,7 +144,7 @@ pub fn add_plot(
                         // our neighbor was added, add ourself too
                         region.insert((plot.row, plot.col));
                         missing = false;
-                        break
+                        break;
                     }
                 }
             }
@@ -152,7 +155,7 @@ pub fn add_plot(
                 new.insert((plot.row, plot.col));
                 regions.push(new);
             }
-       }
+        }
     }
 }
 

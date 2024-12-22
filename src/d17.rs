@@ -182,5 +182,4 @@ Program: 0,1,5,4,3,0";
         let output = state.run();
         assert_eq!(output, vec![4, 6, 3, 5, 6, 3, 5, 2, 1, 0]);
     }
-
 }

@@ -50,7 +50,6 @@ v<<A>>^A                     |<A>AvA<^AA>A<vAAA>^A
 
 impl NumPad {
     pub fn move_(&self, to: &NumPad) -> Vec<DPad> {
-
         let mut result = Vec::new();
 
         // // Danger zones:
@@ -135,7 +134,6 @@ impl NumPad {
         //         result.push(DPad::R);
 
         //     }
-
 
         //     _ => {
         //         result.extend(to.move_(self));

@@ -219,13 +219,10 @@ impl Map {
                 Object::Wall => '#',
             };
             buf.push(c);
-
         }
 
         eprintln!("{buf}");
-
     }
-
 }
 
 pub fn main(input: &str) -> u64 {

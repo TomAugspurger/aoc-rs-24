@@ -16,7 +16,11 @@ pub fn parse_input(input: &str) -> (Vec<&str>, Vec<&str>) {
     (stock, designs)
 }
 
-pub fn is_possible<'a> (design: &'a str, options: & Vec<&'a str>, cache: &mut HashMap<&'a str, bool>) -> bool {
+pub fn is_possible<'a>(
+    design: &'a str,
+    options: &Vec<&'a str>,
+    cache: &mut HashMap<&'a str, bool>,
+) -> bool {
     if let Some(&result) = cache.get(design) {
         return result;
     }
@@ -40,7 +44,10 @@ pub fn main(input: &str) -> usize {
     let (stock, designs) = parse_input(input);
     let cache = &mut HashMap::new();
 
-    designs.iter().filter(|d| is_possible(d, &stock, cache)).count()
+    designs
+        .iter()
+        .filter(|d| is_possible(d, &stock, cache))
+        .count()
 }
 
 #[cfg(test)]

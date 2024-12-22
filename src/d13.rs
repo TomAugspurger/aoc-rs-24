@@ -53,7 +53,6 @@ pub fn parse_input(input: &str) -> Vec<Game> {
     games
 }
 
-
 impl Game {
     pub fn solve(&self) -> Option<u64> {
         // Find the number of A and B pushes that minimize the cost.
@@ -65,18 +64,23 @@ impl Game {
 
         // Step 1: figure out the valid A range, s.t. the x and y aren't too large.
 
-        let feasible_a = (0..=100).filter(|n| { self.a_x * n <= self.x && self.a_y * n <= self.y});
-        let feasible_b = (0..=100).filter(|n| { self.b_x * n <= self.x && self.b_y * n <= self.y});
+        let feasible_a = (0..=100).filter(|n| self.a_x * n <= self.x && self.a_y * n <= self.y);
+        let feasible_b = (0..=100).filter(|n| self.b_x * n <= self.x && self.b_y * n <= self.y);
 
         // Now consider the combinations that meet the conditions.
 
-        let feasible: Vec<_> = feasible_a.cartesian_product(feasible_b).filter(|(na, nb)| {
-            (na * self.a_x + nb * self.b_x == self.x) && (na * self.a_y + nb * self.b_y == self.y)
-        }).collect();
+        let feasible: Vec<_> = feasible_a
+            .cartesian_product(feasible_b)
+            .filter(|(na, nb)| {
+                (na * self.a_x + nb * self.b_x == self.x)
+                    && (na * self.a_y + nb * self.b_y == self.y)
+            })
+            .collect();
 
-        let costs: Vec<_> = feasible.iter().map(|(nx, ny)| {
-            COST_A * nx + COST_B * ny
-        }).collect();
+        let costs: Vec<_> = feasible
+            .iter()
+            .map(|(nx, ny)| COST_A * nx + COST_B * ny)
+            .collect();
 
         costs.iter().min().cloned()
 
@@ -86,7 +90,6 @@ impl Game {
         // best.cloned()
     }
 }
-
 
 pub fn main(input: &str, offset: u64) -> u64 {
     let _ = offset;

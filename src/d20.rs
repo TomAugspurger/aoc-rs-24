@@ -140,7 +140,6 @@ pub fn find_cheats(
     result
 }
 
-
 pub fn main(input: &str) -> usize {
     let (valid, start, end) = parse_input(input);
     let (path, distances) = search(&start, &end, &valid);
