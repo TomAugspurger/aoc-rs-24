@@ -127,7 +127,6 @@ pub fn find_cheats(
             );
 
             if let (Some(row), Some(col)) = cheat {
-
                 if solution.contains(&(row, col)) {
                     // eprintln!("row={row}, col={col}, point={point:?}, offset={offset:?}, cheat={cheat:?}");
                     let new_distance = distances.get(&(row, col)).unwrap();
