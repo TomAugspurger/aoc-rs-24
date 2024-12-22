@@ -63,6 +63,10 @@ pub fn search(start: &Point, end: &Point, valid: &Points) -> (Points, HashMap<Po
     let mut node = *end;
     let mut distances = HashMap::with_capacity(valid.len());
     let mut distance = 0;
+
+    path.push(node);
+    distances.insert(node, distance);
+
     while node != *start {
         node = visited[&node];
         path.push(node);
@@ -117,13 +121,15 @@ pub fn find_cheats(
 
     for point in solution.iter() {
         for offset in offsets.iter() {
-            let cheat = (
+            let cheat: (Option<usize>, Option<usize>) = (
                 point.0.checked_add_signed(offset.0),
                 point.1.checked_add_signed(offset.1),
             );
 
             if let (Some(row), Some(col)) = cheat {
+
                 if solution.contains(&(row, col)) {
+                    // eprintln!("row={row}, col={col}, point={point:?}, offset={offset:?}, cheat={cheat:?}");
                     let new_distance = distances.get(&(row, col)).unwrap();
                     let old_distance = distances.get(point).unwrap();
                     if &(new_distance + 2) < old_distance {
@@ -144,7 +150,7 @@ pub fn main(input: &str) -> usize {
     let (valid, start, end) = parse_input(input);
     let (path, distances) = search(&start, &end, &valid);
     let cheats = find_cheats(&path, &distances);
-    cheats.values().filter(|x| **x > 100).count()
+    cheats.values().filter(|x| **x >= 100).count()
 }
 
 #[cfg(test)]
@@ -174,8 +180,7 @@ mod tests {
         assert_eq!(distances.get(&(3, 1)), Some(83).as_ref());
 
         let cheats = super::find_cheats(&path, &distances);
-        // eprintln!("{:?}", cheats);
         assert_eq!(cheats.get(&((1, 7), (1, 9))), Some(&12));
-        // assert_eq!(cheats.len(), 0);
+        assert_eq!(cheats.len(), 44);
     }
 }

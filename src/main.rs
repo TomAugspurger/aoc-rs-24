@@ -287,7 +287,6 @@ fn main() {
 
         Some(Commands::D20 { input }) => {
             let input = fs::read_to_string(input).expect("Failed to read file.");
-            // 1380 is too low
             let result = d20::main(&input);
             println!("{result}");
         }
