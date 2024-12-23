@@ -6,8 +6,23 @@ Figure out the shortest sequence of button presses to get there.
 
 I think the length of the intermediate button presses is irrelevant;
 they just need to be valid (not panic, get the right answer).
+
+How do we do this? Some options:
+
+1. Manually encode the moves from one button to another.
+2. Model the state of each robot. Do some kind of search.
+
 */
 
+/*
+A DPad.
+
+    +---+---+
+    | ^ | A |
++---+---+---+
+| < | v | > |
++---+---+---+
+*/
 pub enum DPad {
     A,
     U,
@@ -16,18 +31,29 @@ pub enum DPad {
     R,
 }
 
+/*
++---+---+---+
+| 7 | 8 | 9 |
++---+---+---+
+| 4 | 5 | 6 |
++---+---+---+
+| 1 | 2 | 3 |
++---+---+---+
+    | 0 | A |
+    +---+---+
+*/
 pub enum NumPad {
     A,
-    _0,
-    _1,
-    _2,
-    _3,
-    _4,
-    _5,
-    _6,
-    _7,
-    _8,
-    _9,
+    K0,
+    K1,
+    K2,
+    K3,
+    K4,
+    K5,
+    K6,
+    K7,
+    K8,
+    K9,
 }
 
 /*
@@ -48,7 +74,87 @@ v<<A>>^A                     |<A>AvA<^AA>A<vAAA>^A
 0                            |29A
 */
 
+pub fn search() {
+    // The state here is (d0, d1, n0), and we're inputting
+    // on a directional pad to get to where we want to go.
+    todo!()
+}
+
 impl NumPad {
+    pub fn from_value(value: u8) -> NumPad {
+        match value {
+            0 => NumPad::K0,
+            1 => NumPad::K1,
+            2 => NumPad::K2,
+            3 => NumPad::K3,
+            4 => NumPad::K4,
+            5 => NumPad::K5,
+            6 => NumPad::K6,
+            7 => NumPad::K7,
+            8 => NumPad::K8,
+            9 => NumPad::K9,
+            10 => NumPad::A,
+            _ => panic!("Invalid value!"),
+        }
+    }
+    pub fn value(&self) -> u8 {
+        match &self {
+            NumPad::K0 => 0,
+            NumPad::K1 => 1,
+            NumPad::K2 => 2,
+            NumPad::K3 => 3,
+            NumPad::K4 => 4,
+            NumPad::K5 => 5,
+            NumPad::K6 => 6,
+            NumPad::K7 => 7,
+            NumPad::K8 => 8,
+            NumPad::K9 => 9,
+            NumPad::A => 10,
+        }
+    }
+    pub fn up(&self) -> Option<NumPad> {
+        match &self {
+            NumPad::A => Some(NumPad::K3),
+            NumPad::K0 => Some(NumPad::K2),
+            NumPad::K7 => None,
+            NumPad::K8 => None,
+            NumPad::K9 => None,
+            _ => Some(NumPad::from_value(self.value() + 3)),
+        }
+    }
+    pub fn down(&self) -> Option<NumPad> {
+        match &self {
+            NumPad::A => None,
+            NumPad::K0 => None,
+            NumPad::K1 => None,
+            NumPad::K2 => Some(NumPad::K0),
+            NumPad::K3 => Some(NumPad::A),
+            _ => Some(NumPad::from_value(self.value() - 3)),
+        }
+    }
+
+    pub fn left(&self) -> Option<NumPad> {
+        match &self {
+            NumPad::K0 => None,
+            NumPad::K1 => None,
+            NumPad::K4 => None,
+            NumPad::K7 => None,
+            NumPad::A => Some(NumPad::K0),
+            _ => Some(NumPad::from_value(self.value() - 1)),
+        }
+    }
+
+    pub fn right(&self) -> Option<NumPad> {
+        match &self {
+            NumPad::A => None,
+            NumPad::K3 => None,
+            NumPad::K6 => None,
+            NumPad::K9 => None,
+            NumPad::K0 => Some(NumPad::A),
+            _ => Some(NumPad::from_value(self.value() + 1)),
+        }
+    }
+
     pub fn move_(&self, _to: &NumPad) -> Vec<DPad> {
         todo!();
         // let mut result = Vec::new();
