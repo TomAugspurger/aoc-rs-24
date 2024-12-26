@@ -1,6 +1,6 @@
 use aoc_rs_24::{
-    d01, d02, d03, d04, d05, d06, d07, d08, d09, d10, d11, d13, d14, d15, d16, d17, d18, d19, d20,
-    d22, d23, d24, d25
+    d01, d02, d03, d04, d05, d06, d07, d08, d09, d10, d11, d12, d13, d14, d15, d16, d17, d18, d19,
+    d20, d22, d23, d24, d25,
 };
 use clap::{Parser, Subcommand};
 use std::{fs, path::PathBuf};
@@ -89,7 +89,10 @@ enum Commands {
         #[arg(short, long, default_value_t = 25)]
         n_blinks: u64,
     },
-
+    D12 {
+        #[arg(short, long)]
+        input: PathBuf,
+    },
     D13 {
         #[arg(short, long)]
         input: PathBuf,
@@ -163,8 +166,6 @@ enum Commands {
         #[arg(short, long)]
         input: PathBuf,
     },
-
-
 }
 
 fn main() {
@@ -245,7 +246,11 @@ fn main() {
             // 531
             println!("{result}");
         }
-
+        Some(Commands::D12 { input }) => {
+            let input = fs::read_to_string(input).expect("Failed to read file.");
+            let result = d12::main(&input);
+            println!("{result}");
+        }
         Some(Commands::D13 { input, offset }) => {
             let input = fs::read_to_string(input).expect("Failed to read file.");
             let result = d13::main(&input, *offset);

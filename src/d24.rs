@@ -204,5 +204,4 @@ tnw OR pbm -> gnj";
         let result = main(INPUT2);
         assert_eq!(result, 2024);
     }
-
 }

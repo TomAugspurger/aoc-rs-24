@@ -1,29 +1,26 @@
-// use std::{
-//     collections::{HashMap, HashSet},
-//     vec,
-// };
+/*
+We're given an input with various Plants. We need to
+form those plants into Regions, where a Region is a
+group of connected Plants of the same type.
 
-// use itertools::Itertools;
-
-// // use crate::utils::Grid;
-
-use std::collections::{HashMap, HashSet};
+Then, for each Region, we calculate the cost (of fencing)
+as each region's Area * Perimeter.
+*/
+use std::collections::{HashSet, VecDeque};
 
 #[derive(Debug)]
 pub struct Field {
     pub plots: Vec<Plot>,
     pub n_rows: usize,
     pub n_cols: usize,
-    pub regions: HashMap<char, Vec<(usize, usize)>>,
+    // pub regions: HashMap<char, Vec<(usize, usize)>>,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq, Eq, Hash)]
 pub struct Plot {
     pub label: char,
     pub row: usize,
     pub col: usize,
-    // the root node?
-    // pub region: Option<(usize, usize)>,
 }
 
 pub fn parse_input(input: &str) -> Field {
@@ -45,151 +42,99 @@ pub fn parse_input(input: &str) -> Field {
         plots,
         n_rows,
         n_cols,
-        regions: HashMap::new(),
+        // regions: HashMap::new(),
     }
 }
 
 impl Field {
+    /*
+    The neighbors of a plot that have the same label.
+     */
+
     pub fn get(&self, row: usize, col: usize) -> Option<&Plot> {
-        let index = row * self.n_cols + col;
-        self.plots.get(index)
+        self.plots.get(row * self.n_cols + col)
+    }
+
+    pub fn neighbors(&self, plot: &Plot) -> Vec<Option<&Plot>> {
+        let mut neighbors = Vec::new();
+
+        if plot.row > 0 {
+            neighbors.push(self.get(plot.row - 1, plot.col));
+        }
+
+        if plot.row < self.n_rows - 1 {
+            neighbors.push(self.get(plot.row + 1, plot.col));
+        }
+
+        if plot.col > 0 {
+            neighbors.push(self.get(plot.row, plot.col - 1));
+        }
+        if plot.col < self.n_cols - 1 {
+            neighbors.push(self.get(plot.row, plot.col + 1));
+        }
+
+        neighbors
     }
 
     pub fn matching_neighbors(&self, plot: &Plot) -> Vec<&Plot> {
-        let neighbors = [
-            (plot.row.checked_sub(1), Some(plot.col)),
-            (
-                if plot.row < self.n_rows - 1 {
-                    plot.row.checked_add(1)
-                } else {
-                    None
-                },
-                Some(plot.col),
-            ),
-            (Some(plot.row), plot.col.checked_sub(1)),
-            (
-                Some(plot.row),
-                if plot.col < self.n_cols - 1 {
-                    plot.col.checked_add(1)
-                } else {
-                    None
-                },
-            ),
-        ];
-
-        let matches: Vec<_> = neighbors
+        self.neighbors(plot)
             .iter()
-            .filter_map(|(r, c)| match (r, c) {
-                (Some(r), Some(c)) => {
-                    let neighbor = self.get(*r, *c).unwrap();
-                    if neighbor.label == plot.label {
-                        Some(neighbor)
-                    } else {
-                        None
+            .filter_map(|p| {
+                if let Some(p) = p {
+                    if p.label == plot.label {
+                        return Some(*p);
                     }
                 }
-                _ => None,
+                None
             })
-            .collect();
-
-        matches
+            .collect()
     }
-}
-
-pub fn add_plot(
-    plot: &Plot,
-    field: &Field,
-    regions: &mut Vec<HashSet<(usize, usize)>>,
-    visited: &mut HashSet<(usize, usize)>,
-) {
-    if regions.is_empty() {
-        eprintln!(
-            "First entry for {} @ ({}, {})",
-            plot.label, plot.row, plot.col
-        );
-        let mut new = HashSet::new();
-        new.insert((plot.row, plot.col));
-        regions.push(new);
-    } else {
-        visited.insert((plot.row, plot.col));
-        let matching_neighbors = field.matching_neighbors(plot);
-        let mut missing = true;
-
-        if matching_neighbors.is_empty() {
-            eprintln!("Orphan entry for {}", plot.label);
-            let mut new = HashSet::new();
-            new.insert((plot.row, plot.col));
-            regions.push(new);
-        } else {
-            for neighbor in matching_neighbors.iter() {
-                for region in regions.iter_mut() {
-                    if region.contains(&(neighbor.row, neighbor.col)) {
-                        // our neighbor is part of a region. Join it
-                        eprintln!("{plot:?} joins {neighbor:?}");
-                        region.insert((plot.row, plot.col));
-                        missing = false;
-                        break;
-                    }
-                }
-                // Our neighbor doesn't have a thing. Search its neighbors.
-                if missing && !visited.contains(&(neighbor.row, neighbor.col)) {
-                    eprintln!("{plot:?} searches {neighbor:?} neighbors={matching_neighbors:?} regions={regions:?}");
-                    add_plot(neighbor, field, regions, visited);
-                }
-            }
-            // Final check: did we update any of our neighbors?
-            for region in regions.iter_mut() {
-                for neighbor in matching_neighbors.iter() {
-                    if region.contains(&(neighbor.row, neighbor.col)) {
-                        // our neighbor was added, add ourself too
-                        region.insert((plot.row, plot.col));
-                        missing = false;
-                        break;
-                    }
-                }
-            }
-
-            if missing {
-                eprintln!("new group for {}", plot.label);
-                let mut new = HashSet::new();
-                new.insert((plot.row, plot.col));
-                regions.push(new);
-            }
-        }
-    }
-}
-
-pub fn form_regions(field: &Field) -> HashMap<char, Vec<HashSet<(usize, usize)>>> {
-    let mut regions: HashMap<char, Vec<HashSet<(usize, usize)>>> = HashMap::new();
-
-    for plot in field.plots.iter() {
-        let mut visited: HashSet<(usize, usize)> = HashSet::new();
-        let plant_regions = regions.entry(plot.label).or_default();
-        add_plot(plot, field, plant_regions, &mut visited);
-    }
-
-    // eprint!("{regions:?}");
-    regions
 }
 
 pub fn main(input: &str) -> u64 {
     let field = parse_input(input);
-    let region_maps = form_regions(&field);
+    let mut regions: Vec<HashSet<&Plot>> = Vec::new();
+    let mut all_points: HashSet<&Plot> = HashSet::new();
+
+    // https://advent-of-code.xavd.id/writeups/2024/day/12/ has a nice write up.
+    for plot in field.plots.iter() {
+        if all_points.contains(&plot) {
+            continue;
+        }
+
+        // We're the root of a new region. Congrats.
+        let mut region = HashSet::new();
+        let mut queue = VecDeque::new();
+        queue.push_back(plot);
+
+        // Depth-first search over ...
+        while !queue.is_empty() {
+            let current = queue.pop_front().unwrap();
+            if region.contains(&current) {
+                continue;
+            }
+
+            region.insert(current);
+
+            for neighbor in field.matching_neighbors(current) {
+                queue.push_back(neighbor);
+            }
+        }
+
+        all_points.extend(&region);
+        regions.push(region);
+    }
 
     let mut result = 0;
-    for (char, regions) in region_maps.iter() {
-        for region in regions.iter() {
-            let area = region.len();
-            let mut perimeter = 0;
-            for plot in region {
-                perimeter += 4 - field
-                    .matching_neighbors(field.get(plot.0, plot.1).unwrap())
-                    .len();
-            }
-            let region_cost = area * perimeter;
-            eprintln!("char={char} cost={region_cost:?} region={region:?}");
-            result += area * perimeter;
+
+    for region in regions.iter() {
+        let mut perimeter = 0;
+        let area = region.len();
+        // let mut area = 0;
+        for plot in region.iter() {
+            perimeter += 4 - field.matching_neighbors(&plot).len();
         }
+        result += perimeter * area;
     }
 
     result as u64
